@@ -215,7 +215,7 @@ if __name__ == "__main__":
                 out = cv2.VideoWriter(os.path.join(evaluate_dir, _out_file), fourcc, simulator._GUI_camera._fps, (_imgs[0].shape[1], _imgs[0].shape[0]))
                 # out.open(_out_file)
                 for img in _imgs:
-                    out.write(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+                    out.write(cv2.cvtColor(np.uint8(img), cv2.COLOR_BGR2RGB))
                 out.release()
                 print(f'A recording has been saved to file {os.path.join(evaluate_dir, _out_file)}')
 
