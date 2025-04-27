@@ -55,7 +55,7 @@ class PPO(BaseRLModel):
     
     if checkpoint_path is not None:
         # Resume training
-        self.model = PPO_sb3_customlogs.load(checkpoint_path, parallel_envs, verbose=1, #policy_kwargs=rl_config["policy_kwargs"], 
+        model = PPO_sb3_customlogs.load(checkpoint_path, parallel_envs, verbose=1, #policy_kwargs=rl_config["policy_kwargs"], 
                                   tensorboard_log=simulator_folder, n_steps=rl_config["nsteps"],
                                   batch_size=rl_config["batch_size"], target_kl=rl_config["target_kl"],
                                   learning_rate=rl_config["lr"], device=rl_config["device"])
@@ -70,10 +70,19 @@ class PPO(BaseRLModel):
         rl_config["policy_kwargs"]["wandb_id"] = wandb_id
 
         # Initialise model
+        l1 = 0
+        l2 = 0
+        if "reg" in rl_config:
+          print(f'Reg {"l1" in rl_config["reg"]}')
+          if "l1" in rl_config["reg"]:
+            l1 = rl_config["reg"]["l1"]
+          if "l2" in rl_config["reg"]:
+            l2 = rl_config["reg"]["l2"]
+        
         self.model = PPO_sb3_customlogs(rl_config["policy_type"], parallel_envs, verbose=1, policy_kwargs=rl_config["policy_kwargs"],
                              tensorboard_log=simulator_folder, n_steps=rl_config["nsteps"],
                              batch_size=rl_config["batch_size"], target_kl=rl_config["target_kl"],
-                             learning_rate=rl_config["lr"], device=rl_config["device"])
+                             learning_rate=rl_config["lr"], device=rl_config["device"], l1=l1, l2=l2)
         self.training_resumed = False
 
         if "policy_init" in rl_config:
@@ -97,6 +106,7 @@ class PPO(BaseRLModel):
     
   def load_config(self, simulator):
     config = simulator.config["rl"]
+    print(config)
 
     # Need to translate strings into classes
     config["policy_type"] = simulator.get_class("rl.sb3", config["policy_type"])
@@ -112,6 +122,8 @@ class PPO(BaseRLModel):
       if isinstance(config["lr"], dict):
         config["lr"] = simulator.get_class("rl.sb3", config["lr"]["function"])(**config["lr"]["kwargs"])
 
+    
+      
     return config
 
   def learn(self, wandb_callback, with_evaluation=False, eval_freq=400000, n_eval_episodes=5, eval_info_keywords=()):
@@ -131,6 +143,11 @@ class PPO(BaseRLModel):
                          reset_num_timesteps=not self.training_resumed)
 
 class PPO_sb3_customlogs(PPO_sb3):
+   def __init__(self, *args, l1: float = 1, l2: float = None, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.l1 = l1
+    self.l2 = l2
+    
    def learn(
         self: SelfPPO,
         total_timesteps: int,
@@ -140,6 +157,7 @@ class PPO_sb3_customlogs(PPO_sb3):
         info_keywords : tuple = (),
         reset_num_timesteps: bool = True,
         progress_bar: bool = False,
+        regularisation_type: bool = None
     ) -> SelfPPO:
         iteration = 0
 
@@ -185,6 +203,22 @@ class PPO_sb3_customlogs(PPO_sb3):
         callback.on_training_end()
 
         return self
+
+   def collect_rollouts(self, env, callback, rollout_buffer, n_rollout_steps: int):
+    # 1) run the usual rollout collection
+    n_steps, rollout_infos = super().collect_rollouts(env, callback, rollout_buffer, n_rollout_steps)
+    print(f"Update penalty")
+    if self.l1 is not None or self.l2 is not None:
+     # 2) immediately after collecting data but *before* the gradient step,
+     #    push the latest weights into all envs for their regularisation logic:
+     sd = self.policy.state_dict()
+     weights = {k: v.cpu().numpy() for k, v in sd.items() if "weight" in k}
+
+     # Here we assume your env has set_task_regularisation(weights, gamma, is_l2)
+     # and SubprocVecEnv so we use env_method:
+     env.env_method("set_task_regularisation", weights, l1, l2)
+
+    return n_steps, rollout_infos
 
 class Monitor_customops(Monitor):
     """    

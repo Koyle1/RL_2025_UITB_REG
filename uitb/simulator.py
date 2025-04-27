@@ -814,3 +814,6 @@ class Simulator(gym.Env):
     self.task.close(**kwargs)
     self.perception.close(**kwargs)
     self.bm_model.close(**kwargs)
+
+  def set_task_regularisation(self, rl_model, gamma, reg_type):
+        self.task._set_regularisation(rl_model, gamma, reg_type)

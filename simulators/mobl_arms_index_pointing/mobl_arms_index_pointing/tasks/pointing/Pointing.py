@@ -8,7 +8,6 @@ class Pointing(BaseTask):
 
   def __init__(self, model, data, end_effector, shoulder, **kwargs):
     super().__init__(model, data, **kwargs)
-
     # This task requires an end-effector to be defined
     if not isinstance(end_effector, list) and len(end_effector) != 2:
       raise RuntimeError("'end_effector' must be a list with two elements: first defining what type of mujoco element "
@@ -47,7 +46,7 @@ class Pointing(BaseTask):
 
     # Define a default reward function
     #if self.reward_function is None:
-    self._reward_function = NegativeExpDistanceWithHitBonus(k=10)
+    self._reward_function = NegativeExpDistanceWithHitBonus(self, k=10)
 
     # Do a forward step so stuff like geom and body positions are calculated
     mujoco.mj_forward(model, data)

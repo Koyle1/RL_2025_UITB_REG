@@ -75,20 +75,30 @@ class TimeCost(BaseFunction):
 
 class NegativeExpDistanceWithHitBonus(BaseFunction):
 
-  def __init__(self, k):
+  def __init__(self, task, k):
     self.k = k
+    self.task = task
+    self.weights = None
+    self.l1 = 0
+    self.l2 = 0
 
   def get(self, env, dist, info):
+    penalty = 0
+    if self.weights is not None:
+        if self.l1 != 0:
+            penalty += self.l1 * sum( np.sum(np.square(w)) for w in self.weights.values())
+        if self.l2 != 0:
+            penalty += self.l2 * sum(np.absolute(np.square(w)) for w in self.weigths.values()) 
     if info["target_hit"]:
-      return 8
+      return 8 - penalty
     elif info["inside_target"]:
-      return 0
+      return 0 - penalty
     else:
       if callable(self.k):
         k = self.k()
       else:
         k = self.k
-      return (np.exp(-dist*k) - 1)/10
+      return (np.exp(-dist*k) - 1)/10 - penalty
 
   def __repr__(self):
     return "NegativeExpDistanceWithHitBonus"

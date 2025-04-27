@@ -24,7 +24,11 @@ class BaseTask(ABC):
       data: Mujoco data instance of the simulator.
       **kwargs: Many kwargs that should be documented somewhere.
     """
-
+    #Added for regularisation
+    self.weights = None
+    self.gamma = None
+    self.type = None
+    self._reward_function = None
     # Initialise mujoco model of the task, easier to manipulate things
     task_model = mujoco.MjModel.from_xml_path(self.get_xml_file())
 
@@ -272,3 +276,17 @@ class BaseTask(ABC):
     """ If 'get_stateful_information' returns a higher dimensional numpy array, then this method must return an encoder
       (e.g. a PyTorch neural network) to map it into a vector. """
     return self._stateful_information_encoder
+
+  @final
+  def _set_regularisation(self, weights: dict, l1: float, l2: float):
+    # store on the task if you need it elsewhere
+    self.reg_weights = weights
+    self.l1          = l1
+    self.l2          = l2
+
+    # ALSO push into the reward function instance (note the correct variable name)
+    rf = self._reward_function
+    rf.weights   = weights
+    rf.l1        = l1
+    rf.l2        = l2
+      

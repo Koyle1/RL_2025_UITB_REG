@@ -62,6 +62,9 @@ rl:
       initial_value: 5e-5
       min_value: 1e-7
       threshold: 0.8
+  reg:
+      l1: 1.0
+      l2: 0.0
   total_timesteps: 100_000_000
   device: "cuda"
   num_workers: 10
