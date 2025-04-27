@@ -107,7 +107,27 @@ if __name__=="__main__":
 
   # Initialise RL model
   rl_cls = simulator.get_class("rl", config["rl"]["algorithm"])
+  #rl_algo = rl_model.model
+  #env = rl_algo.env 
+  
   rl_model = rl_cls(simulator, checkpoint_path=checkpoint_path, wandb_id=wandb_id)
+
+  '''   
+  env = rl_model.model.get_env()
+  sd = rl_model.model.policy.state_dict()
+  weights = {k: v.cpu().numpy() for k, v in sd.items() if "weight" in k}
+  
+   
+  if args.l2_regularisation is not None and args.l1_regularisation is None:
+      env.env_method("set_task_regularisation", weights, args.l2_regularisation, True)
+      #rl_model.model.get_env().get_attr("task")[0]._set_regularisation(rl_model, args.l2_regularisation, True)
+      print("L2 Regularisation activted")
+
+  if args.l1_regularisation is not None and args.l2_regularisation is None:
+      env.env_method("set_task_regularisation", weights, args.l1_regularisation, False)
+      #rl_model.model.get_env().get_attr("task")[0]._set_regularisation(rl_model, args.l1_regularisation, False)
+      print("L1 Regularisation activted")
+  '''
 
   # Haven't figured out how to periodically save rl in wandb; this is currently done inside the rl_model class
   # TODO this doesn't seem to work; do the files need to be in wandb.run.dir?
@@ -116,6 +136,29 @@ if __name__=="__main__":
 
   # Start the training
   # rl_model.learn(WandbCallback(verbose=2))
+
+  l1 = 0
+  l2 = 0
+  print(f'Reg {"reg" in config["rl"]}')
+  if "reg" in config["rl"]:
+      print(f'Reg {"l1" in config["rl"]["reg"]}')
+      if "l1" in config["rl"]["reg"]:
+          l1 = config["rl"]["reg"]["l1"]
+      if "l2" in config["rl"]["reg"]:
+          l2 = config["rl"]["reg"]["l2"]
+          
+          
+      
+
+  # 2. Now that the model is ready, you can access its env
+  sd = rl_model.model.policy.state_dict()
+  weights = {k: v.cpu().numpy() for k, v in sd.items() if "weight" in k}
+
+  # 3. Now call env_method
+  rl_model.model.env.env_method("set_task_regularisation", weights, l1, l2)
+  
+  
   rl_model.learn(WandbCallback(verbose=2),
                  with_evaluation=with_evaluation, eval_freq=eval_freq, eval_info_keywords=eval_info_keywords)
   run.finish()
+
