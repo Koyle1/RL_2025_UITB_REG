@@ -22,4 +22,4 @@ export WANDB_SERVICE_WAIT=60
 source /home/sc.uni-leipzig.de/ci72buri/.bashrc
 source activate uitb
 wandb login 262cc74711305af4785778900b6bfc2b77d179cd
-conda run -n uitb python ~/projects/RL_2025_UITB_REG/uitb/train/trainer.py ~/projects/RL_2025_UITB_REG/uitb/configs/mobl_arms_index_pointing.yaml --resume
+conda run -n uitb python ~/projects/RL_2025_UITB_REG/uitb/train/trainer.py ~/projects/RL_2025_UITB_REG/uitb/configs/mobl_arms_index_pointing_dropout.yaml 

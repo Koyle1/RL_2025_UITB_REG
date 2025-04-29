@@ -27,6 +27,7 @@ from stable_baselines3.common.torch_layers import (
 )
 from stable_baselines3.common.type_aliases import Schedule
 from stable_baselines3.common.policies import BasePolicy
+from stable_baselines3.common.utils import get_device
 
 
 class ActorCriticPolicyStdDecay(BasePolicy):
@@ -710,80 +711,125 @@ class MultiInputActorCriticPolicyTanhActions(ActorCriticPolicyTanhActions):
       optimizer_kwargs,
     )
 
+
+
+
 class RegularisedMultiInputActorCriticPolicyTanhActions(MultiInputActorCriticPolicyTanhActions):
-  """
-  MultiInputActorClass policy class for actor-critic algorithms (has both policy and value prediction).
-  Used by A2C, PPO and the likes.
+    def __init__(
+        self,
+        observation_space: gym.spaces.Dict,
+        action_space: gym.spaces.Space,
+        lr_schedule: Schedule,
+        net_arch: Optional[List[Union[int, Dict[str, List[int]]]]] = None,
+        activation_fn: Type[nn.Module] = nn.Tanh,
+        ortho_init: bool = True,
+        use_sde: bool = False,
+        log_std_init: float = 0.0,
+        full_std: bool = True,
+        sde_net_arch: Optional[List[int]] = None,
+        use_expln: bool = False,
+        squash_output: bool = False,
+        features_extractor_class: Type[BaseFeaturesExtractor] = CombinedExtractor,
+        features_extractor_kwargs: Optional[Dict[str, Any]] = None,
+        normalize_images: bool = True,
+        optimizer_class: Type[th.optim.Optimizer] = th.optim.Adam,
+        optimizer_kwargs: Optional[Dict[str, Any]] = None,
+        wandb_id: str = None,
+        dropout: float = 0.1,
+        layer_norm: bool = False
+    ):
+        self.dropout = dropout
+        self._layer_norm = layer_norm
+        super().__init__(
+          observation_space,
+          action_space,
+          lr_schedule,
+          net_arch,
+          activation_fn,
+          ortho_init,
+          use_sde,
+          log_std_init,
+          full_std,
+          sde_net_arch,
+          use_expln,
+          squash_output,
+          features_extractor_class,
+          features_extractor_kwargs,
+          normalize_images,
+          optimizer_class,
+          optimizer_kwargs,
+          wandb_id
+        )
+    
+    def _build_mlp_extractor(self) -> None:
+      self.mlp_extractor = RegMlpExtractor(
+      self.features_dim,
+      net_arch=self.net_arch,
+      activation_fn=self.activation_fn,
+      device=self.device,
+      layer_norm=self._layer_norm,
+      dropout=self.dropout
+      )
 
-  :param observation_space: Observation space (Tuple)
-  :param action_space: Action space
-  :param lr_schedule: Learning rate schedule (could be constant)
-  :param net_arch: The specification of the policy and value networks.
-  :param activation_fn: Activation function
-  :param ortho_init: Whether to use or not orthogonal initialization
-  :param use_sde: Whether to use State Dependent Exploration or not
-  :param log_std_init: Initial value for the log standard deviation
-  :param full_std: Whether to use (n_features x n_actions) parameters
-      for the std instead of only (n_features,) when using gSDE
-  :param sde_net_arch: Network architecture for extracting features
-      when using gSDE. If None, the latent features from the policy will be used.
-      Pass an empty list to use the states as features.
-  :param use_expln: Use ``expln()`` function instead of ``exp()`` to ensure
-      a positive standard deviation (cf paper). It allows to keep variance
-      above zero and prevent it from growing too fast. In practice, ``exp()`` is usually enough.
-  :param squash_output: Whether to squash the output using a tanh function,
-      this allows to ensure boundaries when using gSDE.
-  :param features_extractor_class: Uses the CombinedExtractor
-  :param features_extractor_kwargs: Keyword arguments
-      to pass to the feature extractor.
-  :param normalize_images: Whether to normalize images or not,
-       dividing by 255.0 (True by default)
-  :param optimizer_class: The optimizer to use,
-      ``th.optim.Adam`` by default
-  :param dropout: Adds dropout parameters
-  :param optimizer_kwargs: Additional keyword arguments,
-      excluding the learning rate, to pass to the optimizer
-  
-  """
+class RegMlpExtractor(nn.Module):
+    def __init__(
+        self,
+        feature_dim: int,
+        net_arch: Union[list[int], dict[str, list[int]]],
+        activation_fn: type[nn.Module],
+        device: Union[th.device, str] = "auto",
+        dropout: float = 0.1,
+        layer_norm: bool = False
+    ) -> None:
+        super().__init__()
+        device = get_device(device)
+        policy_net: list[nn.Module] = []
+        value_net: list[nn.Module] = []
+        last_layer_dim_pi = feature_dim
+        last_layer_dim_vf = feature_dim
 
-  def __init__(
-      self,
-      observation_space: gym.spaces.Dict,
-      action_space: gym.spaces.Space,
-      lr_schedule: Schedule,
-      net_arch: Optional[List[Union[int, Dict[str, List[int]]]]] = None,
-      activation_fn: Type[nn.Module] = nn.Tanh,
-      ortho_init: bool = True,
-      use_sde: bool = False,
-      log_std_init: float = 0.0,
-      full_std: bool = True,
-      sde_net_arch: Optional[List[int]] = None,
-      use_expln: bool = False,
-      squash_output: bool = False,
-      features_extractor_class: Type[BaseFeaturesExtractor] = CombinedExtractor,
-      features_extractor_kwargs: Optional[Dict[str, Any]] = None,
-      normalize_images: bool = True,
-      optimizer_class: Type[th.optim.Optimizer] = th.optim.Adam,
-      optimizer_kwargs: Optional[Dict[str, Any]] = None,
-      wandb_id: str = None,
-      dropout: float = None
-  ):
-    super(MultiInputActorCriticPolicyTanhActions, self).__init__(
-      observation_space,
-      action_space,
-      lr_schedule,
-      net_arch,
-      activation_fn,
-      ortho_init,
-      use_sde,
-      log_std_init,
-      full_std,
-      sde_net_arch,
-      use_expln,
-      squash_output,
-      features_extractor_class,
-      features_extractor_kwargs,
-      normalize_images,
-      optimizer_class,
-      optimizer_kwargs,
-    )
+        # save dimensions of layers in policy and value nets
+        if isinstance(net_arch, dict):
+            # Note: if key is not specified, assume linear network
+            pi_layers_dims = net_arch.get("pi", [])  # Layer sizes of the policy network
+            vf_layers_dims = net_arch.get("vf", [])  # Layer sizes of the value network
+        else:
+            pi_layers_dims = vf_layers_dims = net_arch
+        # Iterate through the policy layers and build the policy net
+        for curr_layer_dim in pi_layers_dims:
+            policy_net.append(nn.Linear(last_layer_dim_pi, curr_layer_dim))
+            policy_net.append(activation_fn(curr_layer_dim))
+            if layer_norm:
+                policy_net.append(nn.LayerNorm(curr_layer_dim))
+            last_layer_dim_pi = curr_layer_dim
+        # Iterate through the value layers and build the value net
+        for curr_layer_dim in vf_layers_dims:
+            value_net.append(nn.Linear(last_layer_dim_vf, curr_layer_dim))
+            value_net.append(activation_fn(curr_layer_dim))
+            if layer_norm:
+                value_net.append(nn.LayerNorm(curr_layer_dim))
+            last_layer_dim_vf = curr_layer_dim
+
+        policy_net.append(nn.Dropout(dropout))
+        value_net.append(nn.Dropout(dropout))
+        # Save dim, used to create the distributions
+        self.latent_dim_pi = last_layer_dim_pi
+        self.latent_dim_vf = last_layer_dim_vf
+
+        # Create networks
+        # If the list of layers is empty, the network will just act as an Identity module
+        self.policy_net = nn.Sequential(*policy_net).to(device)
+        self.value_net = nn.Sequential(*value_net).to(device)
+
+    def forward(self, features: th.Tensor) -> tuple[th.Tensor, th.Tensor]:
+        """
+        :return: latent_policy, latent_value of the specified network.
+            If all layers are shared, then ``latent_policy == latent_value``
+        """
+        return self.forward_actor(features), self.forward_critic(features)
+
+    def forward_actor(self, features: th.Tensor) -> th.Tensor:
+        return self.policy_net(features)
+
+    def forward_critic(self, features: th.Tensor) -> th.Tensor:
+        return self.value_net(features)

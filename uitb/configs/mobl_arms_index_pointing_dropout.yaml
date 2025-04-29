@@ -54,9 +54,10 @@ rl:
     activation_fn: "torch.nn.LeakyReLU"
     net_arch: [256, 256]
     log_std_init: 0.0
-    features_extractor_class: "feature_extractor.RegularisedFeatureExtractor"
+    features_extractor_class: "feature_extractor.FeatureExtractor"
     normalize_images: False
-    dropout: 0.3
+    #dropout: 0.3
+    #layer_norm: False
   lr: 
     function: "schedule.linear_schedule"
     kwargs:
@@ -66,8 +67,7 @@ rl:
   reg:
       l1: 1.0
       l2: 0.0
-      dropout: 0.3
-      layer_norm: False
+      
   total_timesteps: 100_000_000
   device: "cuda"
   num_workers: 10

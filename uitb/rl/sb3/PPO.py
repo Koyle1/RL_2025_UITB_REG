@@ -5,10 +5,6 @@ import pathlib
 
 from stable_baselines3 import PPO as PPO_sb3
 
-#Added for Dropout Regularisation
-from stable_baselines3.common.torch_layers import MlpExtractor as Mlp
-from stable_baselines3.common.policies import ActorCriticPolicy as Policy
-
 from stable_baselines3.common.vec_env import SubprocVecEnv
 # from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.monitor import Monitor
@@ -75,8 +71,6 @@ class PPO(BaseRLModel):
         rl_config["policy_kwargs"]["wandb_id"] = wandb_id
 
         # Regularisation
-        layer_norm = False
-        dropout = None 
         l1 = 0
         l2 = 0
         if "reg" in rl_config:
@@ -85,10 +79,6 @@ class PPO(BaseRLModel):
             l1 = rl_config["reg"]["l1"]
           if "l2" in rl_config["reg"]:
             l2 = rl_config["reg"]["l2"]
-          if "dropout" in rl_config["reg"]:
-            dropout = rl_config["reg"]["dropout"]
-          if "layer_norm" in rl_config["reg"]:
-            layer_norm = rl_config["reg"]["layer_norm"]
 
         
         
@@ -219,7 +209,7 @@ class PPO_sb3_customlogs(PPO_sb3):
 
    def collect_rollouts(self, env, callback, rollout_buffer, n_rollout_steps: int):
     # 1) run the usual rollout collection
-    n_steps, rollout_infos = super().collect_rollouts(env, callback, rollout_buffer, n_rollout_steps)
+    status = super().collect_rollouts(env, callback, rollout_buffer, n_rollout_steps)
     print(f"Update penalty")
     if self.l1 is not None or self.l2 is not None:
      # 2) immediately after collecting data but *before* the gradient step,
@@ -231,7 +221,7 @@ class PPO_sb3_customlogs(PPO_sb3):
      # and SubprocVecEnv so we use env_method:
      env.env_method("set_task_regularisation", weights, l1, l2)
 
-    return n_steps, rollout_infos
+    return status
 
 class Monitor_customops(Monitor):
     """    

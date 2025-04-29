@@ -1,18 +1,1 @@
 wandb: Appending key for api.wandb.ai to your netrc file: /home/sc.uni-leipzig.de/ci72buri/.netrc
-Traceback (most recent call last):
-  File "/home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/uitb/train/trainer.py", line 9, in <module>
-    from uitb.simulator import Simulator
-  File "/home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/uitb/__init__.py", line 1, in <module>
-    from uitb.simulator import Simulator
-  File "/home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/uitb/simulator.py", line 21, in <module>
-    from .perception.base import Perception
-  File "/home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/uitb/perception/base.py", line 12, in <module>
-    from ..rl.encoders import BaseEncoder
-  File "/home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/uitb/rl/__init__.py", line 1, in <module>
-    from .sb3.PPO import PPO
-  File "/home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/uitb/rl/sb3/PPO.py", line 428
-    )
-    ^
-SyntaxError: positional argument follows keyword argument
-
-ERROR conda.cli.main_run:execute(124): `conda run python /home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/uitb/train/trainer.py /home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/uitb/configs/mobl_arms_index_pointing.yaml --resume` failed. (See above for error)

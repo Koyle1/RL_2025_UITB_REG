@@ -34,16 +34,23 @@ class RegularisedFeatureExtractor(FeatureExtractor):
         self,
         observation_space: gym.spaces.Dict,
         encoders,
-        dropout: float = None
+        dropout: float = None,
+        layer_norm: bool = False
     ):
         super().__init__(observation_space, encoders)
         print("Dropout activated!")
         self.dropout = nn.Dropout(dropout) if dropout is not None else None
+        self.use_layer_norm = layer_norm
+        self.layerNorm = nn.LayerNorm(self._features_dim) if self.use_layer_norm else None
 
+    
     def forward(self, observation):
         x = super().forward(observation)
 
         # Apply dropout only during training
+
+        if self.use_layer_norm:
+            x = self.layerNorm(x)            
         
         if self.dropout is not None and self.training:
             x = self.dropout(x)
