@@ -28,3 +28,25 @@ class FeatureExtractor(BaseFeaturesExtractor):
       encoded_tensor_list.append(extractor(observations[key]))
     # Return a (B, self._features_dim) PyTorch tensor, where B is batch dimension.
     return th.cat(encoded_tensor_list, dim=1)
+
+class RegularisedFeatureExtractor(FeatureExtractor):
+    def __init__(
+        self,
+        observation_space: gym.spaces.Dict,
+        encoders,
+        dropout: float = None
+    ):
+        super().__init__(observation_space, encoders)
+        print("Dropout activated!")
+        self.dropout = nn.Dropout(dropout) if dropout is not None else None
+
+    def forward(self, observation):
+        x = super().forward(observation)
+
+        # Apply dropout only during training
+        
+        if self.dropout is not None and self.training:
+            x = self.dropout(x)
+        
+        return x
+        

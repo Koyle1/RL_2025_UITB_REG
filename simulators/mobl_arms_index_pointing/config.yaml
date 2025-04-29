@@ -49,13 +49,14 @@ simulation:
 
 rl:
   algorithm: PPO
-  policy_type: policies.MultiInputActorCriticPolicyTanhActions
+  policy_type: policies.RegularisedMultiInputActorCriticPolicyTanhActions
   policy_kwargs:
     activation_fn: torch.nn.LeakyReLU
     net_arch: [256, 256]
     log_std_init: 0.0
-    features_extractor_class: feature_extractor.FeatureExtractor
+    features_extractor_class: feature_extractor.RegularisedFeatureExtractor
     normalize_images: false
+    dropout: 0.3
   lr:
     function: schedule.linear_schedule
     kwargs:
@@ -65,6 +66,8 @@ rl:
   reg:
     l1: 1.0
     l2: 0.0
+    dropout: 0.3
+    layer_norm: false
   total_timesteps: 100_000_000
   device: cuda
   num_workers: 10
@@ -75,4 +78,4 @@ rl:
 version: 1.1.0
 package_name: mobl_arms_index_pointing
 gym_name: uitb:mobl_arms_index_pointing-v0
-built: '2025-04-27 16:12:07'
+built: '2025-04-29 10:59:16'

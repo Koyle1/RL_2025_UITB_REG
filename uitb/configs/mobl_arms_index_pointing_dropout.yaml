@@ -1,4 +1,4 @@
-simulator_name: "mobl_arms_index_pointing"
+simulator_name: "reg_mobl_arms_index_pointing"
 
 simulation:
 
@@ -49,13 +49,14 @@ simulation:
 
 rl:
   algorithm: "PPO"
-  policy_type: "policies.MultiInputActorCriticPolicyTanhActions"
+  policy_type: "policies.RegularisedMultiInputActorCriticPolicyTanhActions"
   policy_kwargs:
     activation_fn: "torch.nn.LeakyReLU"
     net_arch: [256, 256]
     log_std_init: 0.0
-    features_extractor_class: "feature_extractor.FeatureExtractor"
+    features_extractor_class: "feature_extractor.RegularisedFeatureExtractor"
     normalize_images: False
+    dropout: 0.3
   lr: 
     function: "schedule.linear_schedule"
     kwargs:

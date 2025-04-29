@@ -4,6 +4,11 @@ import numpy as np
 import pathlib
 
 from stable_baselines3 import PPO as PPO_sb3
+
+#Added for Dropout Regularisation
+from stable_baselines3.common.torch_layers import MlpExtractor as Mlp
+from stable_baselines3.common.policies import ActorCriticPolicy as Policy
+
 from stable_baselines3.common.vec_env import SubprocVecEnv
 # from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.monitor import Monitor
@@ -69,7 +74,9 @@ class PPO(BaseRLModel):
         rl_config["policy_kwargs"]["features_extractor_kwargs"] = {"encoders": encoders}
         rl_config["policy_kwargs"]["wandb_id"] = wandb_id
 
-        # Initialise model
+        # Regularisation
+        layer_norm = False
+        dropout = None 
         l1 = 0
         l2 = 0
         if "reg" in rl_config:
@@ -78,6 +85,13 @@ class PPO(BaseRLModel):
             l1 = rl_config["reg"]["l1"]
           if "l2" in rl_config["reg"]:
             l2 = rl_config["reg"]["l2"]
+          if "dropout" in rl_config["reg"]:
+            dropout = rl_config["reg"]["dropout"]
+          if "layer_norm" in rl_config["reg"]:
+            layer_norm = rl_config["reg"]["layer_norm"]
+
+        
+        
         
         self.model = PPO_sb3_customlogs(rl_config["policy_type"], parallel_envs, verbose=1, policy_kwargs=rl_config["policy_kwargs"],
                              tensorboard_log=simulator_folder, n_steps=rl_config["nsteps"],
@@ -122,7 +136,6 @@ class PPO(BaseRLModel):
       if isinstance(config["lr"], dict):
         config["lr"] = simulator.get_class("rl.sb3", config["lr"]["function"])(**config["lr"]["kwargs"])
 
-    
       
     return config
 
@@ -143,10 +156,10 @@ class PPO(BaseRLModel):
                          reset_num_timesteps=not self.training_resumed)
 
 class PPO_sb3_customlogs(PPO_sb3):
-   def __init__(self, *args, l1: float = 1, l2: float = None, **kwargs):
+   def __init__(self, *args, l1: float = None, l2: float = None, **kwargs):
     super().__init__(*args, **kwargs)
-    self.l1 = l1
-    self.l2 = l2
+    self.l1 = l1 if l1 is not None else 0
+    self.l2 = l2 if l2 is not None else 0
     
    def learn(
         self: SelfPPO,
@@ -387,4 +400,6 @@ def make_vec_env(
     # Prepare the seeds for the first reset
     vec_env.seed(seed)
     return vec_env
+
+
 
