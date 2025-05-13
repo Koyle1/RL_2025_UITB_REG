@@ -1,1 +1,70 @@
 wandb: Appending key for api.wandb.ai to your netrc file: /home/sc.uni-leipzig.de/ci72buri/.netrc
+wandb: Currently logged in as: coyfelix7 (coyfelix7-universit-t-leipzig). Use `wandb login --relogin` to force relogin
+wandb: wandb version 0.19.10 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.15.12
+wandb: Run data is saved locally in /home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/simulators/wandb/run-20250506_172037-sv30fqz2
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run reg_mobl_arms_index_pointing
+wandb: ⭐️ View project at https://wandb.ai/coyfelix7-universit-t-leipzig/uitb
+wandb: 🚀 View run at https://wandb.ai/coyfelix7-universit-t-leipzig/uitb/runs/sv30fqz2
+/home/sc.uni-leipzig.de/ci72buri/.local/lib/python3.11/site-packages/gymnasium/core.py:311: UserWarning: [33mWARN: env.set_task_regularisation to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.set_task_regularisation` for environment variables or `env.get_wrapper_attr('set_task_regularisation')` that will search the reminding wrappers.[0m
+  logger.warn(
+/home/sc.uni-leipzig.de/ci72buri/.local/lib/python3.11/site-packages/gymnasium/core.py:311: UserWarning: [33mWARN: env.set_task_regularisation to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.set_task_regularisation` for environment variables or `env.get_wrapper_attr('set_task_regularisation')` that will search the reminding wrappers.[0m
+  logger.warn(
+/home/sc.uni-leipzig.de/ci72buri/.local/lib/python3.11/site-packages/gymnasium/core.py:311: UserWarning: [33mWARN: env.set_task_regularisation to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.set_task_regularisation` for environment variables or `env.get_wrapper_attr('set_task_regularisation')` that will search the reminding wrappers.[0m
+  logger.warn(
+/home/sc.uni-leipzig.de/ci72buri/.local/lib/python3.11/site-packages/gymnasium/core.py:311: UserWarning: [33mWARN: env.set_task_regularisation to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.set_task_regularisation` for environment variables or `env.get_wrapper_attr('set_task_regularisation')` that will search the reminding wrappers.[0m
+  logger.warn(
+/home/sc.uni-leipzig.de/ci72buri/.local/lib/python3.11/site-packages/gymnasium/core.py:311: UserWarning: [33mWARN: env.set_task_regularisation to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.set_task_regularisation` for environment variables or `env.get_wrapper_attr('set_task_regularisation')` that will search the reminding wrappers.[0m
+  logger.warn(
+/home/sc.uni-leipzig.de/ci72buri/.local/lib/python3.11/site-packages/gymnasium/core.py:311: UserWarning: [33mWARN: env.set_task_regularisation to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.set_task_regularisation` for environment variables or `env.get_wrapper_attr('set_task_regularisation')` that will search the reminding wrappers.[0m
+  logger.warn(
+/home/sc.uni-leipzig.de/ci72buri/.local/lib/python3.11/site-packages/gymnasium/core.py:311: UserWarning: [33mWARN: env.set_task_regularisation to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.set_task_regularisation` for environment variables or `env.get_wrapper_attr('set_task_regularisation')` that will search the reminding wrappers.[0m
+  logger.warn(
+/home/sc.uni-leipzig.de/ci72buri/.local/lib/python3.11/site-packages/gymnasium/core.py:311: UserWarning: [33mWARN: env.set_task_regularisation to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.set_task_regularisation` for environment variables or `env.get_wrapper_attr('set_task_regularisation')` that will search the reminding wrappers.[0m
+  logger.warn(
+/home/sc.uni-leipzig.de/ci72buri/.local/lib/python3.11/site-packages/gymnasium/core.py:311: UserWarning: [33mWARN: env.set_task_regularisation to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.set_task_regularisation` for environment variables or `env.get_wrapper_attr('set_task_regularisation')` that will search the reminding wrappers.[0m
+  logger.warn(
+/home/sc.uni-leipzig.de/ci72buri/.local/lib/python3.11/site-packages/gymnasium/core.py:311: UserWarning: [33mWARN: env.set_task_regularisation to get variables from other wrappers is deprecated and will be removed in v1.0, to get this variable you can do `env.unwrapped.set_task_regularisation` for environment variables or `env.get_wrapper_attr('set_task_regularisation')` that will search the reminding wrappers.[0m
+  logger.warn(
+wandb: WARNING Found log directory outside of given root_logdir, dropping given root_logdir for event file in /home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/simulators/reg_mobl_arms_index_pointing/PPO_7
+wandb: Waiting for W&B process to finish... (success).
+wandb: 
+wandb: Run history:
+wandb:                global_step ▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
+wandb:        rollout/ep_len_mean ▇▇▆▇█▅█▆▇▆▁█▇█▃▇▇█▄█▅█▆█▆▇▇▅▄▆▆▇▅▇▅▆▇▆▆█
+wandb:        rollout/ep_rew_mean ▄▄▅▄▃▅▃▄▄▄█▄▄▂▆▃▁▂▅▃▅▄▄▃▃▃▅▃▄▅▃▆▅▄▃▃▅▂▃▁
+wandb:                   time/fps ▆▆▅▅▄▃▄▄▄▄▅▅▅▅▅▆▆▆▆▆▇▇▇███▇▆▆▅▅▄▃▃▂▂▂▁▁▁
+wandb:            train/approx_kl ▂▂▁▂▂▂▂▁▂▂▂▂▁▂▁▁▁▁▂▂▂▂▁▁▁▂▂▂▂▂▂▂▂▂▂▁▁▁█▁
+wandb:        train/clip_fraction ▂▅▃▅█▇▂▅▃▁▃▅▃▃▄▂▂▄▂▃▄▃▄▄▃▃▃▂▅▅▃▄▄▆▆▄▄▁▆▃
+wandb:           train/clip_range ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:         train/entropy_loss ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:   train/explained_variance █▇▃▆▃▂▂▆▃▃▂▂▇█▅▅▇▂▃▅▁▂█▄▃▂▂▂▄▂▂▃▂▂▅▃▂▅▅▅
+wandb:        train/learning_rate ███████████▇▇▇▇▆▆▆▆▅▅▅▅▅▄▄▄▄▃▃▃▃▃▂▂▂▂▁▁▁
+wandb:                 train/loss ▃▃▁▆▃▃▂▃█▂▄▂▃▃▂▃▃▂█▃▄▃▅▂▃▃▂▁▂▂▂▅▄▄▃▁▂▃▅▂
+wandb: train/policy_gradient_loss ▃▂▂▆▃▁▂▃▂▂█▅▁▃▃▂▃▃▁▂▂▃▂▂▂▂▂▂▂▂▃▂▂▃▂▃▂▂▂▃
+wandb:                  train/std ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:           train/value_loss ▃▃▁▆▃▃▂▃█▂▄▂▃▃▂▃▃▂█▃▄▃▅▂▃▃▂▁▂▂▂▅▄▄▃▁▂▃▅▂
+wandb: 
+wandb: Run summary:
+wandb:                global_step 100000000
+wandb:        rollout/ep_len_mean 800.0
+wandb:        rollout/ep_rew_mean -93.70803
+wandb:                   time/fps 662.0
+wandb:            train/approx_kl 4.06324
+wandb:        train/clip_fraction 0.842
+wandb:           train/clip_range 0.2
+wandb:         train/entropy_loss -36.8924
+wandb:   train/explained_variance -40.01814
+wandb:        train/learning_rate 0.0
+wandb:                 train/loss 16136839168.0
+wandb: train/policy_gradient_loss 0.25833
+wandb:                  train/std 1.0
+wandb:           train/value_loss 32273678336.0
+wandb: 
+wandb: 🚀 View run reg_mobl_arms_index_pointing at: https://wandb.ai/coyfelix7-universit-t-leipzig/uitb/runs/sv30fqz2
+wandb: ️⚡ View job at https://wandb.ai/coyfelix7-universit-t-leipzig/uitb/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjYyNDMwNDc0OA==/version_details/v37
+wandb: Synced 7 W&B file(s), 0 media file(s), 3 artifact file(s) and 2 other file(s)
+wandb: Find logs at: /home/sc.uni-leipzig.de/ci72buri/projects/RL_2025_UITB_REG/simulators/wandb/run-20250506_172037-sv30fqz2/logs
+

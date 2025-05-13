@@ -65,7 +65,7 @@ rl:
       min_value: 1e-7
       threshold: 0.8
   reg:
-    l1: 1.0
+    l1: 10e-6
     l2: 0.0
 
   total_timesteps: 100_000_000
@@ -78,4 +78,4 @@ rl:
 version: 1.1.0
 package_name: reg_mobl_arms_index_pointing
 gym_name: uitb:reg_mobl_arms_index_pointing-v0
-built: '2025-04-29 22:25:45'
+built: '2025-05-06 17:20:34'

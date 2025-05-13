@@ -219,7 +219,7 @@ class PPO_sb3_customlogs(PPO_sb3):
 
      # Here we assume your env has set_task_regularisation(weights, gamma, is_l2)
      # and SubprocVecEnv so we use env_method:
-     env.env_method("set_task_regularisation", weights, l1, l2)
+     env.env_method("set_task_regularisation", weights, self.l1, self.l2)
 
     return status
 

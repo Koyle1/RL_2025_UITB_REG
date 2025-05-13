@@ -86,9 +86,9 @@ class NegativeExpDistanceWithHitBonus(BaseFunction):
     penalty = 0
     if self.weights is not None:
         if self.l1 != 0:
-            penalty += self.l1 * sum( np.sum(np.square(w)) for w in self.weights.values())
+            penalty += self.l1 * sum(np.sum(np.square(w)) for w in self.weights.values())
         if self.l2 != 0:
-            penalty += self.l2 * sum(np.absolute(np.square(w)) for w in self.weigths.values()) 
+            penalty += self.l2 * sum(np.sum(np.absolute(w)) for w in self.weights.values()) 
     if info["target_hit"]:
       return 8 - penalty
     elif info["inside_target"]:
