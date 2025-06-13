@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name=train
+#SBATCH --nodes=1         
+#SBATCH --ntasks=1
+#SBATCH --gpus-per-task=1       
+#SBATCH --cpus-per-task=30      
+#SBATCH --mem=64G
+#SBATCH --partition=paula
+#SBATCH --time=48:00:00
+
+module load Anaconda3
+module load Mesa/23.1.9-GCCcore-13.2.0
+export MUJOCO_GL=egl
+
+source activate uitb
+
+CONFIG_NAME=$1
+
+conda run -n uitb python uitb/train/trainer.py uitb/configs/mobl_arms_index_choice_reaction.yaml
